@@ -12,3 +12,72 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+// Enums
+enum AlertStatus {
+  NEW
+  ACKNOWLEDGED
+  RESOLVED
+}
+
+// Organization (Tenant)
+model Organization {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users  User[]
+  alerts Alert[]
+}
+
+// User
+model User {
+  id             String   @id @default(uuid())
+  email          String   @unique
+  name           String
+  organizationId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  alerts       Alert[]
+  alertEvents  AlertEvent[]
+
+  @@index([organizationId])
+}
+
+// Alert
+model Alert {
+  id             String      @id @default(uuid())
+  title          String
+  description    String?
+  status         AlertStatus @default(NEW)
+  organizationId String
+  createdById    String
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdBy    User         @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  events       AlertEvent[]
+
+  @@index([organizationId, status])
+  @@index([organizationId, createdAt])
+}
+
+// AlertEvent (Audit Trail)
+model AlertEvent {
+  id         String       @id @default(uuid())
+  alertId    String
+  fromStatus AlertStatus?
+  toStatus   AlertStatus
+  userId     String
+  notes      String?
+  createdAt  DateTime     @default(now())
+
+  alert Alert @relation(fields: [alertId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([alertId, createdAt])
+}
