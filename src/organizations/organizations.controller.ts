@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UsePipes } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { OrganizationsService } from './organizations.service.js';
 import { SchemaCreateOrganization } from './dto/create-organization.dto.js';
 import type { CreateOrganizationDto } from './dto/create-organization.dto.js';

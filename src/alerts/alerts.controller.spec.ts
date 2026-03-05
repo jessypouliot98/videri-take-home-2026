@@ -1,21 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AlertController } from './alert.controller.js';
-import { AlertService } from './alert.service.js';
+import { AlertsController } from './alerts.controller.js';
+import { AlertsService } from './alerts.service.js';
 import { AlertStatus } from '../../generated/prisma/enums.js';
 import { randomUUID } from 'crypto';
 
 describe('AlertController', () => {
-  let controller: AlertController;
-  let service: AlertService;
+  let controller: AlertsController;
+  let service: AlertsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [AlertController],
-      providers: [AlertService],
+      controllers: [AlertsController],
+      providers: [AlertsService],
     }).compile();
 
-    controller = module.get(AlertController);
-    service = module.get(AlertService);
+    controller = module.get(AlertsController);
+    service = module.get(AlertsService);
   });
 
   it('should be defined', () => {

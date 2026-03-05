@@ -1,19 +1,20 @@
-import { Controller, Get, Post, Body, UsePipes, Query } from '@nestjs/common';
-import { AlertService } from './alert.service.js';
+import { Controller, Get, Post, Body, Query } from '@nestjs/common';
+import { AlertsService } from './alerts.service.js';
 import { SchemaCreateAlert } from './dto/create-alert.dto.js';
 import type { CreateAlertDto } from './dto/create-alert.dto.js';
-import { SchemaValidationPipe } from '../modules/pipes/SchemaValidation.pipe.js';
 import { ValidatedValuePipe } from '../modules/pipes/validated-value.pipe.js';
 import { SchemaFindPageQuery } from './dto/find-page-query.dto.js';
 import type { FindPageQueryDto } from './dto/find-page-query.dto.js';
 
-@Controller('alert')
-export class AlertController {
-  constructor(private readonly alertService: AlertService) {}
+@Controller('alerts')
+export class AlertsController {
+  constructor(private readonly alertService: AlertsService) {}
 
   @Post()
-  @UsePipes(new SchemaValidationPipe(SchemaCreateAlert))
-  create(@Body() createAlertDto: CreateAlertDto) {
+  create(
+    @Body(new ValidatedValuePipe(SchemaCreateAlert))
+    createAlertDto: CreateAlertDto,
+  ) {
     return this.alertService.create(createAlertDto);
   }
 
