@@ -6,8 +6,8 @@ import { AlertStatus } from '../../generated/prisma/enums.js';
 
 @Injectable()
 export class AlertService {
-  create(dto: CreateAlertDto) {
-    return prisma.alert.create({
+  async create(dto: CreateAlertDto) {
+    const result = await prisma.alert.create({
       data: {
         title: dto.title,
         description: dto.description,
@@ -16,6 +16,7 @@ export class AlertService {
         organizationId: dto.organizationId,
       },
     });
+    return result;
   }
 
   findOne(id: string) {

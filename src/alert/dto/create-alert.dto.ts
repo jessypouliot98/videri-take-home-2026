@@ -10,6 +10,6 @@ export const SchemaCreateAlert = v.object({
   organizationId: v.pipe(v.string(), v.uuid()),
 });
 
-export type CreateAlertDto = StandardSchemaV1.InferInput<
+export type CreateAlertDto = StandardSchemaV1.InferOutput<
   typeof SchemaCreateAlert
 >;
