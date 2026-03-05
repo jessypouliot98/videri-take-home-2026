@@ -47,4 +47,27 @@ describe('AlertController', () => {
       expect(service.create).toHaveBeenCalledWith(...params);
     });
   });
+
+  describe('findPage', () => {
+    it('should return paginated result', async () => {
+      const params: Parameters<typeof controller.findPage> = [
+        {
+          page: 1,
+          size: 10,
+          status: 'NEW',
+        },
+      ];
+      const results: Awaited<ReturnType<typeof service.findPage>> = {
+        items: [],
+        prevPage: null,
+        nextPage: 2,
+      };
+      jest
+        .spyOn(service, 'findPage')
+        .mockImplementation(() => Promise.resolve(results));
+
+      expect(await controller.findPage(...params));
+      expect(service.findPage).toHaveBeenCalledWith(...params);
+    });
+  });
 });

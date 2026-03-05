@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import type { CreateAlertDto } from './dto/create-alert.dto.js';
-import type { UpdateAlertDto } from './dto/update-alert.dto.js';
 import { prisma } from '../modules/prisma/index.js';
 import { AlertStatus } from '../../generated/prisma/enums.js';
 
@@ -17,14 +16,6 @@ export class AlertService {
       },
     });
     return result;
-  }
-
-  findOne(id: string) {
-    return prisma.alert.findUnique({
-      where: {
-        id,
-      },
-    });
   }
 
   async findPage(params: { size: number; page: number; status?: AlertStatus }) {
@@ -48,28 +39,5 @@ export class AlertService {
       prevPage: params.page > 1 ? params.page - 1 : null,
       nextPage: count > skip + take ? params.page + 1 : null,
     };
-  }
-
-  update(id: string, dto: UpdateAlertDto) {
-    return prisma.alert.update({
-      where: {
-        id,
-      },
-      data: {
-        title: dto.title,
-        description: dto.description,
-        status: dto.status,
-        createdById: dto.createdById,
-        organizationId: dto.organizationId,
-      },
-    });
-  }
-
-  remove(id: string) {
-    return prisma.alert.delete({
-      where: {
-        id,
-      },
-    });
   }
 }
