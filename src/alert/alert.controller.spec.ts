@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AlertController } from './alert.controller';
-import { AlertService } from './alert.service';
+import { AlertController } from './alert.controller.js';
+import { AlertService } from './alert.service.js';
 
 describe('AlertController', () => {
   let controller: AlertController;
