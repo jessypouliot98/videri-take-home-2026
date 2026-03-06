@@ -6,7 +6,5 @@ export class CreateAlertDto extends createZodDto(
   z.object({
     title: z.string(),
     status: z.enum(AlertStatus),
-    organizationId: z.uuid(),
-    createdById: z.uuid(),
   }),
 ) {}

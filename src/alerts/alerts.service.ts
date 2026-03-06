@@ -8,13 +8,17 @@ import { AlertEventDto } from './dto/alert-event.dto.js';
 
 @Injectable()
 export class AlertsService {
-  async createAlert(dto: CreateAlertDto): Promise<AlertDto> {
+  async createAlert(
+    createdById: string,
+    organizationId: string,
+    dto: CreateAlertDto,
+  ): Promise<AlertDto> {
     return prisma.alert.create({
       data: {
         title: dto.title,
         status: dto.status,
-        organizationId: dto.organizationId,
-        createdById: dto.createdById,
+        organizationId: organizationId,
+        createdById: createdById,
       },
     });
   }

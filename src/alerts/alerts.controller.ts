@@ -25,8 +25,12 @@ export class AlertsController {
 
   @Post()
   @ZodResponse({ type: AlertDto })
-  async createAlert(@Body() body: CreateAlertDto) {
-    return this.alertsService.createAlert(body);
+  async createAlert(
+    @Body() body: CreateAlertDto,
+    @UserId() userId: string,
+    @OrgId() organizationId: string,
+  ) {
+    return this.alertsService.createAlert(userId, organizationId, body);
   }
 
   @Get()
