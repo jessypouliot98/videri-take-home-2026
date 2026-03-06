@@ -12,11 +12,12 @@ import { AlertsService } from './alerts.service.js';
 import { ZodResponse } from 'nestjs-zod';
 import { AlertDto } from './dto/alert.dto.js';
 import { CreateAlertDto } from './dto/create-alert.dto.js';
-import { GetAlertsDto } from './dto/get-alerts.dto.js';
+import { GetAlertsQueryDto } from './dto/get-alerts-query.dto.js';
 import { UpdateAlertStatusDto } from './dto/update-alert-status.dto.js';
 import { OrgId, UserId } from '../../lib/nest/auth/auth.decorator.js';
 import { AuthGuard } from '../../lib/nest/auth/auth.guard.js';
 import { AlertEventDto } from './dto/alert-event.dto.js';
+import { GetAlertsPageDto } from './dto/get-alerts-page.dto.js';
 
 @Controller('alerts')
 @UseGuards(AuthGuard)
@@ -34,9 +35,12 @@ export class AlertsController {
   }
 
   @Get()
-  @ZodResponse({ type: [AlertDto] })
-  async getAlerts(@Query() query: GetAlertsDto) {
-    return this.alertsService.getAlerts(query);
+  @ZodResponse({ type: GetAlertsPageDto })
+  async getAlertsPage(
+    @Query() query: GetAlertsQueryDto,
+    @OrgId() organizationId: string,
+  ) {
+    return this.alertsService.getAlertsPage(organizationId, query);
   }
 
   @Patch(':alertId/status')

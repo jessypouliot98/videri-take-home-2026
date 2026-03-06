@@ -4,14 +4,16 @@ import { zDateCodec } from '../../../lib/zod/api.js';
 import { AlertStatus } from '../../../generated/prisma/enums.js';
 
 export class AlertDto extends createZodDto(
-  z.object({
-    id: z.uuid(),
-    title: z.string(),
-    status: z.enum(AlertStatus),
-    organizationId: z.uuid(),
-    createdById: z.uuid(),
-    createdAt: zDateCodec,
-    updatedAt: zDateCodec,
-  }),
+  z
+    .object({
+      id: z.uuid(),
+      title: z.string(),
+      status: z.enum(AlertStatus),
+      organizationId: z.uuid(),
+      createdById: z.uuid(),
+      createdAt: zDateCodec,
+      updatedAt: zDateCodec,
+    })
+    .meta({ id: 'AlertDto' }),
   { codec: true },
 ) {}

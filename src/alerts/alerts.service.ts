@@ -2,9 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { prisma } from '../../lib/prisma/index.js';
 import { CreateAlertDto } from './dto/create-alert.dto.js';
 import { AlertDto } from './dto/alert.dto.js';
-import { GetAlertsDto } from './dto/get-alerts.dto.js';
+import { GetAlertsQueryDto } from './dto/get-alerts-query.dto.js';
 import { UpdateAlertStatusDto } from './dto/update-alert-status.dto.js';
 import { AlertEventDto } from './dto/alert-event.dto.js';
+import { Prisma } from '../../generated/prisma/client.js';
+import { isNotNil } from '../../lib/ts-utils/is-not-nil.js';
+import { GetAlertsPageDto } from './dto/get-alerts-page.dto.js';
 
 @Injectable()
 export class AlertsService {
@@ -23,12 +26,47 @@ export class AlertsService {
     });
   }
 
-  async getAlerts(dto: GetAlertsDto): Promise<AlertDto[]> {
-    return prisma.alert.findMany({
-      where: {
-        status: dto.status,
+  async getAlertsPage(
+    organizationId: string,
+    { status, cursor, mode = 'next' }: GetAlertsQueryDto,
+  ): Promise<GetAlertsPageDto> {
+    const items = await prisma.$queryRaw<AlertDto[]>`
+      SELECT *
+      FROM "Alert"
+      WHERE ${Prisma.join(
+        [
+          Prisma.sql`"organizationId" = ${organizationId}`,
+          status && Prisma.sql`"status" = ${status}`,
+          cursor &&
+            Prisma.sql`
+            ("Alert"."createdAt", "Alert"."id")
+            ${Prisma.raw(mode === 'next' ? '<' : '>')}
+            (
+              SELECT "createdAt", "id"
+              FROM "Alert" a
+              WHERE "a"."id" = ${cursor}
+            )
+          `,
+        ].filter(isNotNil),
+        '\tAND ',
+      )}
+      ORDER BY
+        "Alert"."createdAt" DESC,
+        "Alert"."id" DESC
+      LIMIT 2
+    `;
+
+    return {
+      prevCursor: {
+        mode: 'prev',
+        value: items.at(0)?.id ?? cursor,
       },
-    });
+      nextCursor: {
+        mode: 'next',
+        value: items.at(-1)?.id ?? cursor,
+      },
+      items,
+    };
   }
 
   async updateAlertStatus(
