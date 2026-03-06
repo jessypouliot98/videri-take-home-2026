@@ -6,9 +6,10 @@ import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { OrganizationsModule } from './organizations/organizations.module.js';
 import { HttpExceptionFilter } from '../lib/nest/filters/http-exception.filter.js';
 import { UsersModule } from './users/users.module.js';
+import { AlertsModule } from './alerts/alerts.module.js';
 
 @Module({
-  imports: [OrganizationsModule, UsersModule],
+  imports: [OrganizationsModule, UsersModule, AlertsModule],
   controllers: [AppController],
   providers: [
     AppService,
