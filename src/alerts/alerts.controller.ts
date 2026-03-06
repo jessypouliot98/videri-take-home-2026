@@ -14,8 +14,8 @@ import { AlertDto } from './dto/alert.dto.js';
 import { CreateAlertDto } from './dto/create-alert.dto.js';
 import { GetAlertsDto } from './dto/get-alerts.dto.js';
 import { UpdateAlertStatusDto } from './dto/update-alert-status.dto.js';
-import { OrgId, UserId } from '../modules/auth/auth.decorator.js';
-import { AuthGuard } from '../modules/auth/auth.guard.js';
+import { OrgId, UserId } from '../../lib/nest/auth/auth.decorator.js';
+import { AuthGuard } from '../../lib/nest/auth/auth.guard.js';
 import { AlertEventDto } from './dto/alert-event.dto.js';
 
 @Controller('alerts')

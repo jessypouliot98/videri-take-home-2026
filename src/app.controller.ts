@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service.js';
-import { AuthGuard } from './modules/auth/auth.guard.js';
-import { Public } from './modules/auth/auth.decorator.js';
+import { AuthGuard } from '../lib/nest/auth/auth.guard.js';
+import { Public } from '../lib/nest/auth/auth.decorator.js';
 
 @Controller()
 @UseGuards(AuthGuard)

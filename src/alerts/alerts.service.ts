@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { prisma } from '../modules/prisma/index.js';
+import { prisma } from '../../lib/prisma/index.js';
 import { CreateAlertDto } from './dto/create-alert.dto.js';
 import { AlertDto } from './dto/alert.dto.js';
 import { GetAlertsDto } from './dto/get-alerts.dto.js';
