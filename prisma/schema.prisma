@@ -52,7 +52,6 @@ model User {
 model Alert {
   id             String      @id @default(uuid())
   title          String
-  description    String?
   status         AlertStatus @default(NEW)
   organizationId String
   createdById    String
@@ -73,12 +72,11 @@ model AlertEvent {
   alertId    String
   fromStatus AlertStatus?
   toStatus   AlertStatus
-  userId     String
-  notes      String?
+  creaedById String
   createdAt  DateTime     @default(now())
 
-  alert Alert @relation(fields: [alertId], references: [id], onDelete: Cascade)
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  alert     Alert @relation(fields: [alertId], references: [id], onDelete: Cascade)
+  createdBy User  @relation(fields: [creaedById], references: [id], onDelete: Cascade)
 
   @@index([alertId, createdAt])
 }

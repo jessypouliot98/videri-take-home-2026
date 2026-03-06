@@ -21,6 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "nest:resource": "nest g resource",
     "db:migrate": "prisma migrate dev",
+    "db:reset": "prisma migrate reset",
     "db:generate": "prisma generate"
   },
   "dependencies": {
