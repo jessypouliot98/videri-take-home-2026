@@ -1,13 +1,18 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
-import { AlertsModule } from './alerts/alerts.module.js';
-import { OrganizationsModule } from './organizations/organizations.module.js';
-import { UsersModule } from './users/users.module.js';
+import { ZodValidationPipe } from 'nestjs-zod';
+import { APP_PIPE } from '@nestjs/core';
 
 @Module({
-  imports: [AlertsModule, OrganizationsModule, UsersModule],
+  imports: [],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_PIPE,
+      useClass: ZodValidationPipe,
+    },
+  ],
 })
 export class AppModule {}
