@@ -4,6 +4,7 @@ import { CreateAlertDto } from './dto/create-alert.dto.js';
 import { AlertDto } from './dto/alert.dto.js';
 import { GetAlertsDto } from './dto/get-alerts.dto.js';
 import { UpdateAlertStatusDto } from './dto/update-alert-status.dto.js';
+import { AlertEventDto } from './dto/alert-event.dto.js';
 
 @Injectable()
 export class AlertsService {
@@ -58,6 +59,20 @@ export class AlertsService {
         },
       });
       return alert;
+    });
+  }
+
+  async getAlertEvents(
+    alertId: string,
+    organizationId: string,
+  ): Promise<AlertEventDto[]> {
+    return prisma.alertEvent.findMany({
+      where: {
+        alert: {
+          id: alertId,
+          organizationId: organizationId,
+        },
+      },
     });
   }
 }

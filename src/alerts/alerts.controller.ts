@@ -16,6 +16,7 @@ import { GetAlertsDto } from './dto/get-alerts.dto.js';
 import { UpdateAlertStatusDto } from './dto/update-alert-status.dto.js';
 import { OrgId, UserId } from '../modules/auth/auth.decorator.js';
 import { AuthGuard } from '../modules/auth/auth.guard.js';
+import { AlertEventDto } from './dto/alert-event.dto.js';
 
 @Controller('alerts')
 @UseGuards(AuthGuard)
@@ -48,5 +49,14 @@ export class AlertsController {
       organizationId,
       body,
     );
+  }
+
+  @Get(':alertId/events')
+  @ZodResponse({ type: [AlertEventDto] })
+  async getAlertEvents(
+    @Param('alertId') alertId: string,
+    @OrgId() organizationId: string,
+  ) {
+    return this.alertsService.getAlertEvents(alertId, organizationId);
   }
 }
