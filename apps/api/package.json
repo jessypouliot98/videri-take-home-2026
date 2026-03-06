@@ -22,7 +22,8 @@
     "nest:resource": "nest g resource",
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate",
+    "swagger:build": "tsx scripts/build-open-api-contract.ts ../../packages/api-contract/openapi.json"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
