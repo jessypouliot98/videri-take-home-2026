@@ -5,9 +5,10 @@ import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { OrganizationsModule } from './organizations/organizations.module.js';
 import { HttpExceptionFilter } from '../lib/nest/filters/http-exception.filter.js';
+import { UsersModule } from './users/users.module.js';
 
 @Module({
-  imports: [OrganizationsModule],
+  imports: [OrganizationsModule, UsersModule],
   controllers: [AppController],
   providers: [
     AppService,
