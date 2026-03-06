@@ -68,15 +68,15 @@ model Alert {
 
 // AlertEvent (Audit Trail)
 model AlertEvent {
-  id         String       @id @default(uuid())
-  alertId    String
-  fromStatus AlertStatus?
-  toStatus   AlertStatus
-  creaedById String
-  createdAt  DateTime     @default(now())
+  id          String       @id @default(uuid())
+  alertId     String
+  fromStatus  AlertStatus?
+  toStatus    AlertStatus
+  createdById String
+  createdAt   DateTime     @default(now())
 
   alert     Alert @relation(fields: [alertId], references: [id], onDelete: Cascade)
-  createdBy User  @relation(fields: [creaedById], references: [id], onDelete: Cascade)
+  createdBy User  @relation(fields: [createdById], references: [id], onDelete: Cascade)
 
   @@index([alertId, createdAt])
 }

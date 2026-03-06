@@ -3,6 +3,7 @@ import { prisma } from '../modules/prisma/index.js';
 import { CreateAlertDto } from './dto/create-alert.dto.js';
 import { AlertDto } from './dto/alert.dto.js';
 import { GetAlertsDto } from './dto/get-alerts.dto.js';
+import { UpdateAlertStatusDto } from './dto/update-alert-status.dto.js';
 
 @Injectable()
 export class AlertsService {
@@ -24,4 +25,45 @@ export class AlertsService {
       },
     });
   }
+
+  async updateAlertStatus(
+    alertId: string,
+    createdById: string,
+    organizationId: string,
+    dto: UpdateAlertStatusDto,
+  ): Promise<AlertDto> {
+    return prisma.$transaction(async (tx) => {
+      const prevAlert = await tx.alert.findFirstOrThrow({
+        where: {
+          id: alertId,
+          organizationId,
+        },
+        select: {
+          status: true,
+        },
+      });
+      if (!canUpdateAlertStatus(prevAlert.status, dto.status)) {
+        throw new UpdateAlertStatusError();
+      }
+      const alert = await tx.alert.update({
+        where: { id: alertId },
+        data: { status: dto.status },
+      });
+      await tx.alertEvent.create({
+        data: {
+          alertId,
+          createdById,
+          fromStatus: prevAlert.status,
+          toStatus: alert.status,
+        },
+      });
+      return alert;
+    });
+  }
 }
+
+function canUpdateAlertStatus(..._params: unknown[]): boolean {
+  return true;
+}
+
+class UpdateAlertStatusError extends Error {}

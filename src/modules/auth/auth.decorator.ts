@@ -12,6 +12,9 @@ interface AuthRequest extends Request {
 export const OrgId = createParamDecorator(
   (data: unknown, ctx: ExecutionContext): string => {
     const request = ctx.switchToHttp().getRequest<AuthRequest>();
+    if (!('orgId' in request)) {
+      throw new Error('orgId not found in request. Check auth guard');
+    }
     return request.orgId;
   },
 );
@@ -19,6 +22,9 @@ export const OrgId = createParamDecorator(
 export const UserId = createParamDecorator(
   (data: unknown, ctx: ExecutionContext): string => {
     const request = ctx.switchToHttp().getRequest<AuthRequest>();
+    if (!('userId' in request)) {
+      throw new Error('userId not found in request. Check auth guard');
+    }
     return request.userId;
   },
 );
