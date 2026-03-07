@@ -56,6 +56,27 @@ export function Sidebar() {
             </button>
           </li>
         ))}
+        <li
+          role="radio"
+          aria-checked={!auth.isAuthenticated}
+          className="group flex"
+        >
+          <button
+            className={clsx(
+              "flex flex-col items-start flex-1 p-2 cursor-pointer",
+              "bg-white hover:bg-blue-100",
+              "group-aria-checked:bg-blue-500 hover:group-aria-checked:bg-blue-500 group-aria-checked:text-white"
+            )}
+            onClick={() => {
+              auth.logout()
+              queryClient.clear();
+            }}
+          >
+            <div className="text-xl font-semibold">
+              No user
+            </div>
+          </button>
+        </li>
       </ul>
     )
   }

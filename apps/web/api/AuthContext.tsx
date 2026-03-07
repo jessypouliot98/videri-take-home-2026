@@ -18,10 +18,7 @@ type ContextType =
 const AuthContext = createContext<ContextType | null>(null);
 
 export function AuthProvider({ children }: PropsWithChildren) {
-  const [state, setState] = useState<State | undefined>({
-    userId: 'e7d2c8ab-0be4-4ba9-9ecb-a39137ba20d0',
-    orgId: '2d3afcc0-93a5-49a1-a7b9-b14ffd471547'
-  });
+  const [state, setState] = useState<State | undefined>();
   const headers = useMemo((): Record<string, string> => {
     if (!state) {
       return {};

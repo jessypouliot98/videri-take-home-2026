@@ -4,6 +4,7 @@ import { useApi } from '@/api/QueryProvider';
 import { useMemo } from 'react';
 import { format } from 'date-fns';
 import { useParams } from 'next/dist/client/components/navigation';
+import { getErrorMessage } from '@/utils/get-error-message';
 
 export default function Alert() {
   const { alertId } = useParams<{ alertId: string }>()
@@ -38,7 +39,7 @@ export default function Alert() {
             className="p-2"
             colSpan={COL_SPAN}
           >
-            Error
+            {getErrorMessage(alertEventsQuery.error)}
           </td>
         </tr>
         </tbody>

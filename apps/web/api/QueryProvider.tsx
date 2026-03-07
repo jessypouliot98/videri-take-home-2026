@@ -25,6 +25,7 @@ export function QueryProvider({ children }: PropsWithChildren) {
       queries: {
         staleTime: milliseconds({ minutes: 1 }),
         gcTime: milliseconds({ minutes: 5 }),
+        retry: false,
       }
     }
   }))

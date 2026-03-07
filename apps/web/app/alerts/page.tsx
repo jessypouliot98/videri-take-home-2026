@@ -4,6 +4,7 @@ import { useApi } from '@/api/QueryProvider';
 import { useMemo } from 'react';
 import { format } from 'date-fns';
 import Link from 'next/link';
+import { getErrorMessage } from '@/utils/get-error-message';
 
 export default function Alerts() {
   const api = useApi();
@@ -32,7 +33,7 @@ export default function Alerts() {
               className="p-2"
               colSpan={COL_SPAN}
             >
-              Error
+              {getErrorMessage(infiniteAlertsQuery.error)}
             </td>
           </tr>
         </tbody>
@@ -95,6 +96,14 @@ export default function Alerts() {
     <div className="p-4">
       <h1 className="text-xl font-medium">Alerts</h1>
       <table className="w-full">
+        <thead>
+        <tr className="bg-neutral-300">
+          <th className="text-left p-2">Title</th>
+          <th className="text-left p-2">Status</th>
+          <th className="text-left p-2">Timestamp</th>
+          <th className="text-left p-2">Actions</th>
+        </tr>
+        </thead>
         {tableBody}
       </table>
     </div>
