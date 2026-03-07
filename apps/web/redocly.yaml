@@ -1,0 +1,5 @@
+apis:
+  core@v1:
+    root: packages/api-contract/generated/openapi.json
+    x-openapi-ts:
+      output: ./generated/openapi.d.ts

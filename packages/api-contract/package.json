@@ -1,6 +1,4 @@
 {
   "name": "@pkg/api-contract",
-  "files": [
-    "openapi.json"
-  ]
+  "version": "1.0.0"
 }

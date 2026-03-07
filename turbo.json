@@ -1,7 +1,20 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
   "tasks": {
+    "generate": {
+      "cache": true,
+      "outputs": [
+        "generated/**",
+        ".next/**",
+        "dist/**"
+      ]
+    },
+    "codegen": {
+      "dependsOn": ["^generate"],
+      "cache": true
+    },
     "start:dev": {
+      "dependsOn": ["^codegen"],
       "persistent": true,
       "cache": false
     }
