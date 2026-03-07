@@ -3,6 +3,7 @@
 import { useApi } from '@/api/QueryProvider';
 import { useMemo } from 'react';
 import { format } from 'date-fns';
+import Link from 'next/link';
 
 export default function Alerts() {
   const api = useApi();
@@ -22,12 +23,17 @@ export default function Alerts() {
   );
 
   const tableBody = useMemo(() => {
-    const COL_SPAN = 3;
+    const COL_SPAN = 4;
     if (infiniteAlertsQuery.isError) {
       return (
         <tbody>
           <tr>
-            <td colSpan={COL_SPAN}>Error</td>
+            <td
+              className="p-2"
+              colSpan={COL_SPAN}
+            >
+              Error
+            </td>
           </tr>
         </tbody>
       )
@@ -36,7 +42,12 @@ export default function Alerts() {
       return (
         <tbody>
           <tr>
-            <td colSpan={COL_SPAN}>Loading...</td>
+            <td
+              className="p-2"
+              colSpan={COL_SPAN}
+            >
+              Loading...
+            </td>
           </tr>
         </tbody>
       )
@@ -46,7 +57,12 @@ export default function Alerts() {
       return (
         <tbody>
           <tr>
-            <td colSpan={COL_SPAN}>No results, try adjusting your filters or create your first alert!</td>
+            <td
+              className="p-2"
+              colSpan={COL_SPAN}
+            >
+              No results, try adjusting your filters or create your first alert!
+            </td>
           </tr>
         </tbody>
       )
@@ -56,19 +72,31 @@ export default function Alerts() {
         {items.map((alert) => (
           <tr
             key={alert.id}
-            className="bg-blue-500"
+            className="bg-white odd:bg-neutral-100"
           >
-            <td>{alert.title}</td>
-            <td>{alert.status}</td>
-            <td>{format(alert.createdAt, 'yyyy-MM-dd HH:mm:ss')}</td>
+            <td className="p-2">{alert.title}</td>
+            <td className="p-2">{alert.status}</td>
+            <td className="p-2">{format(alert.createdAt, 'yyyy-MM-dd HH:mm:ss')}</td>
+            <td className="p-2">
+              <Link
+                href={`/alerts/${alert.id}`}
+                className="inline-block bg-blue-500 text-white px-4 py-2 rounded-lg"
+              >
+                Alert Details
+              </Link>
+            </td>
           </tr>
         ))}
       </tbody>
     )
   }, [infiniteAlertsQuery])
+
   return (
-    <table className="w-full">
-      {tableBody}
-    </table>
+    <div className="p-4">
+      <h1 className="text-xl font-medium">Alerts</h1>
+      <table className="w-full">
+        {tableBody}
+      </table>
+    </div>
   );
 }

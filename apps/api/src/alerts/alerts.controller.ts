@@ -1,7 +1,7 @@
 import {
   Body,
   Controller,
-  Get,
+  Get, NotFoundException,
   Param,
   Patch,
   Post,
@@ -57,6 +57,19 @@ export class AlertsController {
       organizationId,
       body,
     );
+  }
+
+  @Get(':alertId')
+  @ZodResponse({ status: 200, type: AlertDto })
+  async findAlert(
+    @Param('alertId') alertId: string,
+    @OrgId() organizationId: string,
+  ) {
+    const result = await this.alertsService.findAlert(alertId, organizationId);
+    if (!result) {
+      throw new NotFoundException('Alert not found');
+    }
+    return result;
   }
 
   @Get(':alertId/events')

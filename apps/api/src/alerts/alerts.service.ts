@@ -68,6 +68,18 @@ export class AlertsService {
     };
   }
 
+  async findAlert(
+    alertId: string,
+    organizationId: string,
+  ): Promise<AlertDto | null> {
+    return prisma.alert.findFirst({
+      where: {
+        id: alertId,
+        organizationId,
+      },
+    });
+  }
+
   async updateAlertStatus(
     alertId: string,
     createdById: string,
