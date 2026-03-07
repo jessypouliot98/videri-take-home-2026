@@ -33,6 +33,16 @@
       "post": {
         "operationId": "OrganizationsController_createOrganization",
         "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrganizationDto"
+              }
+            }
+          }
+        },
         "responses": {
           "default": {
             "description": "",
@@ -54,6 +64,16 @@
       "post": {
         "operationId": "UsersController_createUser",
         "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
         "responses": {
           "default": {
             "description": "",
@@ -75,6 +95,16 @@
       "post": {
         "operationId": "AlertsController_createAlert",
         "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAlertDto"
+              }
+            }
+          }
+        },
         "responses": {
           "default": {
             "description": "",
@@ -93,7 +123,41 @@
       },
       "get": {
         "operationId": "AlertsController_getAlertsPage",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "NEW",
+                "ACKNOWLEDGED",
+                "RESOLVED"
+              ]
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mode",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "next",
+                "prev"
+              ]
+            }
+          }
+        ],
         "responses": {
           "default": {
             "description": "",
@@ -114,7 +178,26 @@
     "/alerts/{alertId}/status": {
       "patch": {
         "operationId": "AlertsController_updateAlertStatus",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "alertId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAlertStatusDto"
+              }
+            }
+          }
+        },
         "responses": {
           "default": {
             "description": "",
@@ -135,7 +218,16 @@
     "/alerts/{alertId}/events": {
       "get": {
         "operationId": "AlertsController_getAlertEvents",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "alertId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "default": {
             "description": "",
@@ -161,12 +253,25 @@
     "title": "Videri Take-Home Assignment",
     "description": "Multi-Tenant Alerts & Workflow Service",
     "version": "1.0",
-    "contact": {}
+    "contact": {
+
+    }
   },
   "tags": [],
   "servers": [],
   "components": {
     "schemas": {
+      "CreateOrganizationDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
       "OrganizationDto": {
         "type": "object",
         "properties": {
@@ -194,6 +299,29 @@
           "name",
           "createdAt",
           "updatedAt"
+        ]
+      },
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          }
+        },
+        "required": [
+          "email",
+          "name",
+          "organizationId"
         ]
       },
       "UserDto": {
@@ -231,18 +359,11 @@
           "updatedAt"
         ]
       },
-      "AlertDto": {
+      "CreateAlertDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-            "x-nestjs_zod-parent-id": "AlertDto"
-          },
           "title": {
-            "type": "string",
-            "x-nestjs_zod-parent-id": "AlertDto"
+            "type": "string"
           },
           "status": {
             "type": "string",
@@ -250,32 +371,52 @@
               "NEW",
               "ACKNOWLEDGED",
               "RESOLVED"
-            ],
-            "x-nestjs_zod-parent-id": "AlertDto"
+            ]
+          }
+        },
+        "required": [
+          "title",
+          "status"
+        ]
+      },
+      "AlertDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "NEW",
+              "ACKNOWLEDGED",
+              "RESOLVED"
+            ]
           },
           "organizationId": {
             "type": "string",
             "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-            "x-nestjs_zod-parent-id": "AlertDto"
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "createdById": {
             "type": "string",
             "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-            "x-nestjs_zod-parent-id": "AlertDto"
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
           "createdAt": {
             "type": "string",
             "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
-            "x-nestjs_zod-parent-id": "AlertDto"
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
           },
           "updatedAt": {
             "type": "string",
             "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$",
-            "x-nestjs_zod-parent-id": "AlertDto"
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
           }
         },
         "required": [
@@ -286,7 +427,8 @@
           "createdById",
           "createdAt",
           "updatedAt"
-        ]
+        ],
+        "id": "AlertDto"
       },
       "GetAlertsPageDto": {
         "type": "object",
@@ -296,7 +438,9 @@
             "properties": {
               "mode": {
                 "type": "string",
-                "const": "prev"
+                "enum": [
+                  "prev"
+                ]
               },
               "value": {
                 "type": "string"
@@ -304,70 +448,16 @@
             },
             "required": [
               "mode"
-            ],
-            "x-nestjs_zod-has-const": true,
-            "x-nestjs_zod-parent-has-refs": true,
-            "x-nestjs_zod-self-required": true,
-            "x-nestjs_zod-$defs": {
-              "AlertDto": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "format": "uuid",
-                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                  },
-                  "title": {
-                    "type": "string"
-                  },
-                  "status": {
-                    "type": "string",
-                    "enum": [
-                      "NEW",
-                      "ACKNOWLEDGED",
-                      "RESOLVED"
-                    ]
-                  },
-                  "organizationId": {
-                    "type": "string",
-                    "format": "uuid",
-                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                  },
-                  "createdById": {
-                    "type": "string",
-                    "format": "uuid",
-                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                  },
-                  "createdAt": {
-                    "type": "string",
-                    "format": "date-time",
-                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
-                  },
-                  "updatedAt": {
-                    "type": "string",
-                    "format": "date-time",
-                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
-                  }
-                },
-                "required": [
-                  "id",
-                  "title",
-                  "status",
-                  "organizationId",
-                  "createdById",
-                  "createdAt",
-                  "updatedAt"
-                ],
-                "id": "AlertDto"
-              }
-            }
+            ]
           },
           "nextCursor": {
             "type": "object",
             "properties": {
               "mode": {
                 "type": "string",
-                "const": "next"
+                "enum": [
+                  "next"
+                ]
               },
               "value": {
                 "type": "string"
@@ -375,123 +465,12 @@
             },
             "required": [
               "mode"
-            ],
-            "x-nestjs_zod-has-const": true,
-            "x-nestjs_zod-parent-has-refs": true,
-            "x-nestjs_zod-self-required": true,
-            "x-nestjs_zod-$defs": {
-              "AlertDto": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "format": "uuid",
-                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                  },
-                  "title": {
-                    "type": "string"
-                  },
-                  "status": {
-                    "type": "string",
-                    "enum": [
-                      "NEW",
-                      "ACKNOWLEDGED",
-                      "RESOLVED"
-                    ]
-                  },
-                  "organizationId": {
-                    "type": "string",
-                    "format": "uuid",
-                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                  },
-                  "createdById": {
-                    "type": "string",
-                    "format": "uuid",
-                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                  },
-                  "createdAt": {
-                    "type": "string",
-                    "format": "date-time",
-                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
-                  },
-                  "updatedAt": {
-                    "type": "string",
-                    "format": "date-time",
-                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
-                  }
-                },
-                "required": [
-                  "id",
-                  "title",
-                  "status",
-                  "organizationId",
-                  "createdById",
-                  "createdAt",
-                  "updatedAt"
-                ],
-                "id": "AlertDto"
-              }
-            }
+            ]
           },
           "items": {
             "type": "array",
             "items": {
-              "$ref": "#/$defs/AlertDto"
-            },
-            "x-nestjs_zod-has-const": true,
-            "x-nestjs_zod-parent-has-refs": true,
-            "x-nestjs_zod-$defs": {
-              "AlertDto": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "format": "uuid",
-                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                  },
-                  "title": {
-                    "type": "string"
-                  },
-                  "status": {
-                    "type": "string",
-                    "enum": [
-                      "NEW",
-                      "ACKNOWLEDGED",
-                      "RESOLVED"
-                    ]
-                  },
-                  "organizationId": {
-                    "type": "string",
-                    "format": "uuid",
-                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                  },
-                  "createdById": {
-                    "type": "string",
-                    "format": "uuid",
-                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                  },
-                  "createdAt": {
-                    "type": "string",
-                    "format": "date-time",
-                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
-                  },
-                  "updatedAt": {
-                    "type": "string",
-                    "format": "date-time",
-                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
-                  }
-                },
-                "required": [
-                  "id",
-                  "title",
-                  "status",
-                  "organizationId",
-                  "createdById",
-                  "createdAt",
-                  "updatedAt"
-                ],
-                "id": "AlertDto"
-              }
+              "$ref": "#/components/schemas/AlertDto"
             }
           }
         },
@@ -499,6 +478,22 @@
           "prevCursor",
           "nextCursor",
           "items"
+        ]
+      },
+      "UpdateAlertStatusDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "NEW",
+              "ACKNOWLEDGED",
+              "RESOLVED"
+            ]
+          }
+        },
+        "required": [
+          "status"
         ]
       },
       "AlertEventDto": {
