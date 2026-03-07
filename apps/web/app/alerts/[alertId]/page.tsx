@@ -56,10 +56,11 @@ export default function Alert() {
           prevData,
         };
       },
-      onError: (_error, _b, ctx) => {
+      onError: (error, _vars, ctx) => {
         if (ctx?.prevData) {
           queryClient.setQueryData(ctx.queryOptions.queryKey, ctx.prevData)
         }
+        window.alert(getErrorMessage(error))
       },
       onSettled: () => {
         void queryClient.invalidateQueries({

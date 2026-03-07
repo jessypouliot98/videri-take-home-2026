@@ -1,5 +1,3 @@
-import { HttpException } from '@nestjs/common/exceptions/http.exception.js';
+import { AppHttpError } from '../../nest/errors/app-http-error.js';
 
-export abstract class DatabaseHttpError extends Error {
-  abstract toNestHttpException(this: DatabaseHttpError): HttpException;
-}
+export abstract class DatabaseHttpError extends AppHttpError {}

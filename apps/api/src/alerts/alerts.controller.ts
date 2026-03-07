@@ -18,6 +18,7 @@ import { OrgId, UserId } from '../../lib/nest/auth/auth.decorator.js';
 import { AuthGuard } from '../../lib/nest/auth/auth.guard.js';
 import { AlertEventDto } from './dto/alert-event.dto.js';
 import { GetAlertsPageDto } from './dto/get-alerts-page.dto.js';
+import { AppHttpError } from '../../lib/nest/errors/app-http-error.js';
 
 @Controller('alerts')
 @UseGuards(AuthGuard)
@@ -51,12 +52,19 @@ export class AlertsController {
     @OrgId() organizationId: string,
     @Body() body: UpdateAlertStatusDto,
   ) {
-    return this.alertsService.updateAlertStatus(
-      alertId,
-      userId,
-      organizationId,
-      body,
-    );
+    try {
+      return await this.alertsService.updateAlertStatus(
+        alertId,
+        userId,
+        organizationId,
+        body,
+      );
+    } catch (error) {
+      if (error instanceof AppHttpError) {
+        throw error.toNestHttpException();
+      }
+      throw error;
+    }
   }
 
   @Get(':alertId')
