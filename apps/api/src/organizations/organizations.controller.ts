@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { OrganizationsService } from './organizations.service.js';
 import { ZodResponse } from 'nestjs-zod';
 import { OrganizationDto } from './dto/organization.dto.js';
@@ -12,5 +12,11 @@ export class OrganizationsController {
   @ZodResponse({ status: 200, type: OrganizationDto })
   async createOrganization(@Body() body: CreateOrganizationDto) {
     return this.organizationsService.createOrganization(body);
+  }
+
+  @Get()
+  @ZodResponse({ status: 200, type: [OrganizationDto] })
+  async findAllOrganizations() {
+    return this.organizationsService.__UNSAFE__findAllOrganizations();
   }
 }

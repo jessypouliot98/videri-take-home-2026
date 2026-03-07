@@ -1,7 +1,7 @@
 'use client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { milliseconds } from 'date-fns';
-import { createContext, PropsWithChildren, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import createFetchClient from "openapi-fetch";
 import createClient, { OpenapiQueryClient } from 'openapi-react-query';
 import type { paths } from "@pkg/api-contract/generated/openapi.d.ts"
@@ -29,26 +29,20 @@ export function QueryProvider({ children }: PropsWithChildren) {
     }
   }))
 
-  const headersRef = useRef(auth.headers);
-  useEffect(() => {
-    headersRef.current = auth.headers;
-  }, [auth.headers, queryClient]);
-
-  // eslint-disable-next-line react-hooks/refs
-  const [api] = useState(() => {
+  const api = useMemo(() => {
     const fetchClient = createFetchClient<paths>({
       // TODO NEXT_PUBLIC_ENV
       baseUrl: "http://localhost:3001/",
       fetch: (req) => {
         const request = req.clone();
-        for (const [key, value] of Object.entries(headersRef.current)) {
+        for (const [key, value] of Object.entries(auth.headers)) {
           request.headers.set(key, value);
         }
         return fetch(request);
       }
     });
     return createClient(fetchClient);
-  })
+  }, [auth.headers])
 
   return (
     <QueryClientProvider client={queryClient}>

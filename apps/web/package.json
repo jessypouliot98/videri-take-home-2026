@@ -16,7 +16,8 @@
     "openapi-fetch": "^0.17.0",
     "openapi-react-query": "^0.5.4",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "react-hook-form": "^7.71.2"
   },
   "devDependencies": {
     "@pkg/api-contract": "workspace:*",

@@ -14,4 +14,8 @@ export class OrganizationsService {
       },
     });
   }
+
+  async __UNSAFE__findAllOrganizations(): Promise<OrganizationDto[]> {
+    return prisma.organization.findMany();
+  }
 }

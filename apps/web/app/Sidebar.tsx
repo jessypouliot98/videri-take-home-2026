@@ -44,11 +44,15 @@ export function Sidebar() {
                   userId: user.id,
                   orgId: user.organization.id,
                 })
-                void queryClient.invalidateQueries();
+                // Hack to fix delayed by 1 render auth change
+                setTimeout(() => {
+                  void queryClient.invalidateQueries();
+                }, 0)
               }}
             >
-              <div className="text-lg font-semibold">{user.name}</div>
-              <div className="text-sm">{user.email}</div>
+              <div className="text-xl font-semibold">{user.name}</div>
+              <div className="text-sm italic">{user.email}</div>
+              <div className="text-xs">{`@${user.organization.name}`}</div>
             </button>
           </li>
         ))}
