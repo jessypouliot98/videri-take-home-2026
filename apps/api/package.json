@@ -24,7 +24,9 @@
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",
     "db:generate": "prisma generate",
-    "swagger:generate": "tsx scripts/build-open-api-contract.ts ../../packages/api-contract/generated/openapi.json"
+    "swagger:generate:json": "tsx scripts/build-open-api-contract.ts ../../packages/api-contract/generated/openapi.json",
+    "swagger:generate:types": "npx openapi-typescript ../../packages/api-contract/generated/openapi.json -o petstore.d.ts",
+    "swagger:generate": "pnpm swagger:generate:json && pnpm swagger:generate:types"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
