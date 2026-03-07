@@ -4,12 +4,16 @@ import { createContext, useState, PropsWithChildren, useMemo, useCallback, useCo
 
 type State = { userId: string; orgId: string };
 
-type ContextType = {
-  headers: Record<string, string>;
-  login: (params: { userId: string; orgId: string }) => void;
-  logout: () => void;
-  isAuthenticated: boolean;
-}
+type ContextType =
+  & {
+    headers: Record<string, string>;
+    login: (params: { userId: string; orgId: string }) => void;
+    logout: () => void;
+  }
+  & (
+    | { isAuthenticated: true; user: State }
+    | { isAuthenticated: false; user: undefined }
+  );
 
 const AuthContext = createContext<ContextType | null>(null);
 
@@ -36,7 +40,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
       login: setState,
       logout,
       isAuthenticated: !!state,
-    }}>
+      user: state,
+    } as ContextType}>
       {children}
     </AuthContext.Provider>
   )

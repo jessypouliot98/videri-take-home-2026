@@ -59,6 +59,8 @@ export class AlertsService {
     const prevCursor = items.at(0)?.id ?? cursor?.value;
     const nextCursor = items.at(-1)?.id ?? cursor?.value;
 
+    console.log({ prevCursor });
+
     return {
       prevCursor: prevCursor ? `prev:${prevCursor}` : null,
       nextCursor: nextCursor ? `next:${nextCursor}` : null,

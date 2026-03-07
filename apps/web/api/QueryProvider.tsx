@@ -20,11 +20,6 @@ export function useApi() {
 export function QueryProvider({ children }: PropsWithChildren) {
   const auth = useAuth();
 
-  const headersRef = useRef(auth.headers);
-  useEffect(() => {
-    headersRef.current = auth.headers;
-  }, [auth.headers]);
-
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
       queries: {
@@ -33,6 +28,11 @@ export function QueryProvider({ children }: PropsWithChildren) {
       }
     }
   }))
+
+  const headersRef = useRef(auth.headers);
+  useEffect(() => {
+    headersRef.current = auth.headers;
+  }, [auth.headers, queryClient]);
 
   // eslint-disable-next-line react-hooks/refs
   const [api] = useState(() => {

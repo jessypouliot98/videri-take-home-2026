@@ -25,7 +25,7 @@ export class AlertsController {
   constructor(private readonly alertsService: AlertsService) {}
 
   @Post()
-  @ZodResponse({ type: AlertDto })
+  @ZodResponse({ status: 200, type: AlertDto })
   async createAlert(
     @Body() body: CreateAlertDto,
     @UserId() userId: string,
@@ -35,7 +35,7 @@ export class AlertsController {
   }
 
   @Get()
-  @ZodResponse({ type: GetAlertsPageDto })
+  @ZodResponse({ status: 200, type: GetAlertsPageDto })
   async getAlertsPage(
     @Query() query: GetAlertsQueryDto,
     @OrgId() organizationId: string,
@@ -44,7 +44,7 @@ export class AlertsController {
   }
 
   @Patch(':alertId/status')
-  @ZodResponse({ type: AlertDto })
+  @ZodResponse({ status: 200, type: AlertDto })
   async updateAlertStatus(
     @Param('alertId') alertId: string,
     @UserId() userId: string,
@@ -60,7 +60,7 @@ export class AlertsController {
   }
 
   @Get(':alertId/events')
-  @ZodResponse({ type: [AlertEventDto] })
+  @ZodResponse({ status: 200, type: [AlertEventDto] })
   async getAlertEvents(
     @Param('alertId') alertId: string,
     @OrgId() organizationId: string,

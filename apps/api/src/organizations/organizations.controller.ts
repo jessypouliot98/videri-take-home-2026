@@ -9,7 +9,7 @@ export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
   @Post()
-  @ZodResponse({ type: OrganizationDto })
+  @ZodResponse({ status: 200, type: OrganizationDto })
   async createOrganization(@Body() body: CreateOrganizationDto) {
     return this.organizationsService.createOrganization(body);
   }
