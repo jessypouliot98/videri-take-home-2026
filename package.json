@@ -2,6 +2,7 @@
   "name": "videri-take-home-2026",
   "scripts": {
     "generate": "turbo run generate",
+    "codegen": "turbo run codegen",
     "start:dev": "turbo run start:dev"
   },
   "devDependencies": {

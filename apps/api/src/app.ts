@@ -5,7 +5,11 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { cleanupOpenApiDoc } from 'nestjs-zod';
 
 export async function createApp() {
-  return NestFactory.create(AppModule);
+  return NestFactory.create(AppModule, {
+    cors: {
+      origin: '*',
+    },
+  });
 }
 
 function openApiFactory() {

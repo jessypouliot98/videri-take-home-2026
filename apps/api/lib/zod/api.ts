@@ -7,14 +7,8 @@ export const zDateCodec = z.codec(z.iso.datetime(), z.date(), {
 
 export function zKeySetPagination<T extends z.ZodType>(dto: T) {
   return z.object({
-    prevCursor: z.object({
-      mode: z.literal('prev'),
-      value: z.string().optional(),
-    }),
-    nextCursor: z.object({
-      mode: z.literal('next'),
-      value: z.string().optional(),
-    }),
+    prevCursor: z.string().nullable(),
+    nextCursor: z.string().nullable(),
     items: z.array(dto),
   });
 }

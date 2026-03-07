@@ -1,4 +1,7 @@
 {
   "name": "@pkg/api-contract",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "scripts": {
+    "codegen": "pnpm dlx openapi-typescript http://localhost:3001/api-json -o ./generated/openapi.d.ts"
+  }
 }

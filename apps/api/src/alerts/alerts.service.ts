@@ -28,7 +28,7 @@ export class AlertsService {
 
   async getAlertsPage(
     organizationId: string,
-    { status, cursor, mode = 'next' }: GetAlertsQueryDto,
+    { status, cursor }: GetAlertsQueryDto,
   ): Promise<GetAlertsPageDto> {
     const items = await prisma.$queryRaw<AlertDto[]>`
       SELECT *
@@ -40,11 +40,11 @@ export class AlertsService {
           cursor &&
             Prisma.sql`
             ("Alert"."createdAt", "Alert"."id")
-            ${Prisma.raw(mode === 'next' ? '<' : '>')}
+            ${Prisma.raw(cursor.mode === 'next' ? '<' : '>')}
             (
               SELECT "createdAt", "id"
               FROM "Alert" a
-              WHERE "a"."id" = ${cursor}
+              WHERE "a"."id" = ${cursor.value}
             )
           `,
         ].filter(isNotNil),
@@ -56,15 +56,12 @@ export class AlertsService {
       LIMIT 2
     `;
 
+    const prevCursor = items.at(0)?.id ?? cursor?.value;
+    const nextCursor = items.at(-1)?.id ?? cursor?.value;
+
     return {
-      prevCursor: {
-        mode: 'prev',
-        value: items.at(0)?.id ?? cursor,
-      },
-      nextCursor: {
-        mode: 'next',
-        value: items.at(-1)?.id ?? cursor,
-      },
+      prevCursor: prevCursor ? `prev:${prevCursor}` : null,
+      nextCursor: nextCursor ? `next:${nextCursor}` : null,
       items,
     };
   }

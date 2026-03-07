@@ -7,7 +7,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "generate": "pnpm db:generate && pnpm swagger:generate",
+    "generate": "pnpm db:generate",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -24,7 +24,8 @@
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",
     "db:generate": "prisma generate",
-    "swagger:generate:json": "tsc --project tsconfig.json scripts/build-open-api-contract.ts ../../packages/api-contract/generated/openapi.json",
+    "--BROKEN--": "---",
+    "swagger:generate:json": "tsx scripts/build-open-api-contract.ts ../../packages/api-contract/generated/openapi.json",
     "swagger:generate:types": "npx openapi-typescript ../../packages/api-contract/generated/openapi.json -o petstore.d.ts",
     "swagger:generate": "pnpm swagger:generate:json && pnpm swagger:generate:types"
   },
