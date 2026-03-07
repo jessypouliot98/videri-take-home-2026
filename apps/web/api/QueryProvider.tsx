@@ -1,7 +1,7 @@
 'use client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { milliseconds } from 'date-fns';
-import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { createContext, PropsWithChildren, useContext, useMemo, useState } from 'react';
 import createFetchClient from "openapi-fetch";
 import createClient, { OpenapiQueryClient } from 'openapi-react-query';
 import type { paths } from "@pkg/api-contract/generated/openapi.d.ts"
@@ -40,7 +40,7 @@ export function QueryProvider({ children }: PropsWithChildren) {
           request.headers.set(key, value);
         }
         return fetch(request);
-      }
+      },
     });
     return createClient(fetchClient);
   }, [auth.headers])

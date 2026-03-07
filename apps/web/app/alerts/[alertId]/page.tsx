@@ -5,11 +5,15 @@ import { useMemo } from 'react';
 import { format } from 'date-fns';
 import { useParams } from 'next/dist/client/components/navigation';
 import { getErrorMessage } from '@/utils/get-error-message';
+import { useQueryClient } from '@tanstack/react-query';
+import { components } from '@pkg/api-contract/generated/openapi';
+import { invalidateQueriesPredicate } from '@/api/utils/invalidate-queries-predicate';
 
 export default function Alert() {
   const { alertId } = useParams<{ alertId: string }>()
 
   const api = useApi();
+  const queryClient = useQueryClient();
   const alertQuery = api.useQuery(
     'get',
     '/alerts/{alertId}',
@@ -28,6 +32,44 @@ export default function Alert() {
       },
     },
   );
+  const updateStatusAction = api.useMutation(
+    'patch',
+    '/alerts/{alertId}/status',
+    {
+      onMutate: ({ body }) => {
+        const queryOptions = api.queryOptions('get', '/alerts/{alertId}', {
+          params: {
+            path: { alertId }
+          }
+        })
+        type Tmp = components['schemas']['AlertDto'] | undefined;
+        const prevData = queryClient.getQueryData(queryOptions.queryKey) as Tmp;
+        queryClient.setQueryData(queryOptions.queryKey, (alert: Tmp) => {
+          if (!alert) return alert;
+          return {
+            ...alert,
+            status: body.status,
+          }
+        })
+        return {
+          queryOptions,
+          prevData,
+        };
+      },
+      onError: (_error, _b, ctx) => {
+        if (ctx?.prevData) {
+          queryClient.setQueryData(ctx.queryOptions.queryKey, ctx.prevData)
+        }
+      },
+      onSettled: () => {
+        void queryClient.invalidateQueries({
+          predicate: invalidateQueriesPredicate(
+            api.queryOptions('get', '/alerts').queryKey
+          ),
+        });
+      }
+    }
+  )
 
   const tableBody = useMemo(() => {
     const COL_SPAN = 4;
@@ -67,7 +109,7 @@ export default function Alert() {
             className="p-2"
             colSpan={COL_SPAN}
           >
-            No results, try adjusting your filters or create your first alert!
+            No results
           </td>
         </tr>
         </tbody>
@@ -94,7 +136,31 @@ export default function Alert() {
       <h1 className="text-xl font-medium">Alert Events</h1>
       <h2>{alertQuery.data?.title ?? "Loading..."}</h2>
       <div className="flex gap-2">
-        <div>Status: {alertQuery.data?.status ?? "Loading..."}</div>
+        <div className="flex items-center gap-2">
+          <div>Status: </div>
+          <select
+            value={alertQuery.data?.status ?? ''}
+            onChange={(ev) => {
+              const status = ev.target.value as components['schemas']['AlertDto']['status']
+              updateStatusAction.mutate({
+                params: {
+                  path: { alertId },
+                },
+                body: { status },
+              })
+            }}
+          >
+            {alertQuery.data ? (
+              <>
+                <option value="NEW" selected={alertQuery.data?.status === 'NEW'}>NEW</option>
+                <option value="ACKNOWLEDGED" selected={alertQuery.data?.status === 'ACKNOWLEDGED'}>ACKNOWLEDGED</option>
+                <option value="RESOLVED" selected={alertQuery.data?.status === 'RESOLVED'}>RESOLVED</option>
+              </>
+            ) : (
+              <option value="" disabled>Loading...</option>
+            )}
+          </select>
+        </div>
         <div>Created At: {format(alertQuery.data?.createdAt ?? new Date(), 'yyyy-MM-dd HH:mm:ss')}</div>
       </div>
       <table className="w-full">
