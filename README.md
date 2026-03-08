@@ -34,3 +34,9 @@
 ### Environment Variables
 
 To improve the development experience of using variables, we could use [dotenv](https://www.npmjs.com/package/dotenv) to load all environment variables from a single `.env` file from root of the monorepo.
+
+### Miscelaneous
+
+- [Architecture Write-Up](/documentation/Videri%20-%20Architecture%20Write-Up.pdf)
+- [Recording](/documentation/Recording.mp4)
+<video src="/documentation/Recording.mp4" width="100%" controls>
