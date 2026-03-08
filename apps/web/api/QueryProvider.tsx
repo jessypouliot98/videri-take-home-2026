@@ -32,8 +32,7 @@ export function QueryProvider({ children }: PropsWithChildren) {
 
   const api = useMemo(() => {
     const fetchClient = createFetchClient<paths>({
-      // TODO NEXT_PUBLIC_ENV
-      baseUrl: "http://localhost:3001/",
+      baseUrl: process.env.NEXT_PUBLIC_API_URL,
       fetch: (req) => {
         const request = req.clone();
         for (const [key, value] of Object.entries(auth.headers)) {
