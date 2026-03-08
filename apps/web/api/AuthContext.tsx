@@ -19,6 +19,13 @@ const AuthContext = createContext<ContextType | null>(null);
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const [state, setState] = useState<State | undefined>(() => {
+    if (typeof window === 'undefined') {
+      /**
+       * This could cause hydration errors, but for a demo with not a real auth
+       * this should be fine for now.
+       */
+      return undefined;
+    }
     const userId = localStorage.getItem('userId');
     const orgId = localStorage.getItem('orgId');
     if (userId && orgId) {

@@ -3,12 +3,17 @@ import { AppModule } from './app.module.js';
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { cleanupOpenApiDoc } from 'nestjs-zod';
+import { DatadogLogger } from '../lib/nest/logger/datadog-logger.js';
 
 export async function createApp() {
   return NestFactory.create(AppModule, {
     cors: {
       origin: '*',
     },
+    logger: new DatadogLogger({
+      prefix: 'NEST_API',
+      logLevels: ['error', 'warn'],
+    }),
   });
 }
 

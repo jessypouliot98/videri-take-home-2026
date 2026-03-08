@@ -2,10 +2,13 @@
 
 import { useApi } from '@/api/QueryProvider';
 import { useForm } from 'react-hook-form';
-import { components } from '@pkg/api-contract/generated/openapi'
-import { useEffect } from 'react';
+import { components } from '@pkg/api-contract/generated/openapi';
 import { useQueryClient } from '@tanstack/react-query';
-import { getErrorMessage } from '@/utils/get-error-message';
+import { invalidateQueriesPredicate } from '@/api/utils/invalidate-queries-predicate';
+import { apiErrorToForm } from '@/utils/form/api-error-to-form';
+import { useFormResetOnSubmit } from '@/utils/form/use-form-reset-on-submit';
+import { CardForm } from '@/components/CardForm';
+import { FormField } from '@/components/FormField';
 
 export default function Home() {
   const api = useApi();
@@ -13,13 +16,6 @@ export default function Home() {
 
   const organizationsQuery = api.useQuery('get', '/orgs');
 
-  const createUserAction = api.useMutation('post', '/users', {
-    onSettled: () => {
-      void queryClient.invalidateQueries({
-        queryKey: api.queryOptions('get', '/users').queryKey,
-      });
-    }
-  })
   const createUserForm = useForm<components['schemas']['CreateUserDto']>({
     defaultValues: {
       name: '',
@@ -27,86 +23,101 @@ export default function Home() {
       organizationId: '',
     },
   })
-  useEffect(() => {
-    createUserForm.reset();
-  }, [createUserForm, createUserForm.formState.isSubmitted]);
-
-  const createOrgAction = api.useMutation('post', '/orgs', {
+  const createUserAction = api.useMutation('post', '/users', {
+    onError: apiErrorToForm(createUserForm),
     onSettled: () => {
       void queryClient.invalidateQueries({
-        queryKey: api.queryOptions('get', '/orgs').queryKey,
+        predicate: invalidateQueriesPredicate(api.queryOptions('get', '/users').queryKey),
       });
     }
   })
+  useFormResetOnSubmit(createUserForm);
+
   const createOrgForm = useForm<components['schemas']['CreateOrganizationDto']>({
     defaultValues: {
       name: '',
     },
   })
-  useEffect(() => {
-    createOrgForm.reset();
-  }, [createOrgForm, createOrgForm.formState.isSubmitted]);
+  const createOrgAction = api.useMutation('post', '/orgs', {
+    onError: apiErrorToForm(createOrgForm),
+    onSettled: () => {
+      void queryClient.invalidateQueries({
+        predicate: invalidateQueriesPredicate(api.queryOptions('get', '/orgs').queryKey),
+      });
+    }
+  })
+  useFormResetOnSubmit(createOrgForm);
+
+  const createAlertForm = useForm<components['schemas']['CreateAlertDto']>({
+    defaultValues: {
+      title: '',
+    },
+  })
+  const createAlertAction = api.useMutation('post', '/alerts', {
+    onError: apiErrorToForm(createAlertForm),
+    onSettled: () => {
+      void queryClient.invalidateQueries({
+        predicate: invalidateQueriesPredicate(api.queryOptions('get', '/alerts').queryKey),
+      });
+    }
+  })
+  useFormResetOnSubmit(createAlertForm);
 
   return (
     <div className="space-y-4">
-      <section className="p-4 border border-neutral-200 rounded-xl space-y-4">
-        <h2 className="text-2xl font-bold">Create an organization</h2>
-        {createOrgAction.isError && (
-          <div className="text-red-500">{getErrorMessage(createOrgAction.error)}</div>
-        )}
-        <form
-          className="space-y-4"
-          onSubmit={createOrgForm.handleSubmit((body) => {
-            return createOrgAction.mutateAsync({ body });
-          })}
-        >
-          <label className="flex gap-2 items-center border-b bg-neutral-100 p-2 focus-within:border-blue-500 rounded-t">
-            <div>Name</div>
+
+      <CardForm
+        title="Create an organization"
+        formState={createOrgForm.formState}
+        onSubmit={createOrgForm.handleSubmit((body) => {
+          return createOrgAction.mutateAsync({ body });
+        })}
+      >
+        <FormField
+          label="Name"
+          Input={(
             <input
               type="text"
               className="focus:outline-none w-full"
               {...createOrgForm.register('name')}
             />
-          </label>
-          <div className="flex justify-end">
-            <button
-              disabled={createOrgForm.formState.isSubmitting}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg disabled:bg-neutral-400"
-            >
-              Submit
-            </button>
-          </div>
-        </form>
-      </section>
-      <section className="p-4 border border-neutral-200 rounded-xl space-y-4">
-        <h2 className="text-2xl font-bold">Create a user</h2>
-        {createUserAction.isError && (
-          <div className="text-red-500">{getErrorMessage(createUserAction.error)}</div>
-        )}
-        <form
-          className="space-y-4"
-          onSubmit={createUserForm.handleSubmit((body) => {
-            return createUserAction.mutateAsync({ body });
-          })}
-        >
-          <label className="flex gap-2 items-center border-b bg-neutral-100 p-2 focus-within:border-blue-500 rounded-t">
-            <div>Name</div>
+          )}
+          error={createOrgForm.formState.errors.name}
+        />
+      </CardForm>
+
+      <CardForm
+        title="Create a user"
+        formState={createUserForm.formState}
+        onSubmit={createUserForm.handleSubmit((body) => {
+          return createUserAction.mutateAsync({ body });
+        })}
+      >
+        <FormField
+          label="Name"
+          Input={(
             <input
               type="text"
               className="focus:outline-none w-full"
               {...createUserForm.register('name')}
             />
-          </label>
-          <label className="flex gap-2 items-center border-b bg-neutral-100 p-2 focus-within:border-blue-500 rounded-t">
-            <div>Email</div>
+          )}
+          error={createUserForm.formState.errors.name}
+        />
+        <FormField
+          label="Email"
+          Input={(
             <input
               type="text"
               className="focus:outline-none w-full"
               {...createUserForm.register('email')}
             />
-          </label>
-          <label className="flex gap-2 items-center border-b bg-neutral-100 p-2 focus-within:border-blue-500 rounded-t">
-            <div>Organization</div>
+          )}
+          error={createUserForm.formState.errors.email}
+        />
+        <FormField
+          label="Organization"
+          Input={(
             <select
               className="focus:outline-none w-full"
               {...createUserForm.register('organizationId')}
@@ -116,17 +127,30 @@ export default function Home() {
                 <option key={org.id} value={org.id}>{org.name}</option>
               ))}
             </select>
-          </label>
-          <div className="flex justify-end">
-            <button
-              disabled={createUserForm.formState.isSubmitting}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg disabled:bg-neutral-400"
-            >
-              Submit
-            </button>
-          </div>
-        </form>
-      </section>
+          )}
+          error={createUserForm.formState.errors.organizationId}
+        />
+      </CardForm>
+
+      <CardForm
+        title="Create a user"
+        formState={createAlertForm.formState}
+        onSubmit={createAlertForm.handleSubmit((body) => {
+          return createAlertAction.mutateAsync({ body });
+        })}
+      >
+        <FormField
+          label="Title"
+          Input={(
+            <input
+              type="text"
+              className="focus:outline-none w-full"
+              {...createAlertForm.register('title')}
+            />
+          )}
+          error={createAlertForm.formState.errors.title}
+        />
+      </CardForm>
     </div>
   );
 }

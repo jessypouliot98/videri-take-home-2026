@@ -1,10 +1,11 @@
 import { createZodDto } from 'nestjs-zod';
 import z from 'zod/v4';
-import { AlertStatus } from '../../../generated/prisma/enums.js';
 
 export class CreateAlertDto extends createZodDto(
   z.object({
-    title: z.string(),
-    status: z.enum(AlertStatus),
+    title: z
+      .string()
+      .min(1, 'Title cannot be empty')
+      .max(255, 'Title cannot be longer than 255 characters'),
   }),
 ) {}

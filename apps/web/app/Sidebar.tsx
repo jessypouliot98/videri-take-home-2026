@@ -82,12 +82,12 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="w-64 overflow-y-auto border-r border-neutral-200">
+    <aside className="sticky top-0 h-screen overflow-y-auto w-64 border-r border-neutral-200">
       <div className="p-2">
         <h1 className="text-3xl font-bold">API Demo</h1>
       </div>
-      <div>
-        <div className="p-2">
+      <div className="py-2">
+        <div className="px-2">
           <h2 className="text-lg font-medium">Pick a user</h2>
         </div>
         {content}

@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { prisma } from '../../lib/prisma/index.js';
 import { CreateAlertDto } from './dto/create-alert.dto.js';
 import { AlertDto } from './dto/alert.dto.js';
@@ -20,7 +20,6 @@ export class AlertsService {
     return prisma.alert.create({
       data: {
         title: dto.title,
-        status: dto.status,
         organizationId: organizationId,
         createdById: createdById,
       },
