@@ -30,6 +30,7 @@ export class AlertsService {
     organizationId: string,
     { status, cursor }: GetAlertsQueryDto,
   ): Promise<GetAlertsPageDto> {
+    const pageSize = 20;
     const items = await prisma.$queryRaw<AlertDto[]>`
       SELECT *
       FROM "Alert"
@@ -53,13 +54,11 @@ export class AlertsService {
       ORDER BY
         "Alert"."createdAt" DESC,
         "Alert"."id" DESC
-      LIMIT 2
+      LIMIT ${pageSize}
     `;
 
     const prevCursor = items.at(0)?.id ?? cursor?.value;
-    const nextCursor = items.at(-1)?.id ?? cursor?.value;
-
-    console.log({ prevCursor });
+    const nextCursor = items.length === pageSize ? items.at(-1)?.id : undefined;
 
     return {
       prevCursor: prevCursor ? `prev:${prevCursor}` : null,

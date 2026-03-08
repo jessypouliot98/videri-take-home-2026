@@ -128,6 +128,19 @@ export default function Alerts() {
         </tr>
         </thead>
         {tableBody}
+        {infiniteAlertsQuery.hasNextPage && (
+          <tfoot>
+            <tr>
+              <td>
+                <button onClick={() => {
+                  infiniteAlertsQuery.fetchNextPage();
+                }}>
+                  Load more
+                </button>
+              </td>
+            </tr>
+          </tfoot>
+        )}
       </table>
     </div>
   );
