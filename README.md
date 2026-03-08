@@ -28,6 +28,7 @@
 - Build the OpenApi type-definitions
   - Once the API is up and running, run `pnpm codegen`
   - Note that this must run while the API is running and is a temporary solution until the OpenAPI codegen is fixed for CLI script usage.
+  - Also note that this also depends on the API being available at `http://localhost:3001/api-json`
 
 ## Notes
 
