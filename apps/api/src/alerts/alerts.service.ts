@@ -30,7 +30,7 @@ export class AlertsService {
     organizationId: string,
     { status, cursor }: GetAlertsQueryDto,
   ): Promise<GetAlertsPageDto> {
-    const pageSize = 20;
+    const pageSize = 10;
     const items = await prisma.$queryRaw<AlertDto[]>`
       SELECT *
       FROM "Alert"
