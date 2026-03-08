@@ -38,5 +38,4 @@ To improve the development experience of using variables, we could use [dotenv](
 ### Miscelaneous
 
 - [Architecture Write-Up](/documentation/Videri%20-%20Architecture%20Write-Up.pdf)
-- [Recording](https://github.com/jessypouliot98/videri-take-home-2026/raw/refs/heads/main/documentation/Recording.mp4)
-<video src="/documentation/Recording.mp4" width="100%" controls>
+- [Recording](/documentation/Recording.mp4)
