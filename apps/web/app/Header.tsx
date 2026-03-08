@@ -25,7 +25,7 @@ export function Header() {
   const pathname = usePathname();
   return (
     <header className="border-b border-neutral-200">
-      <nav className="max-w-7xl mx-auto">
+      <nav className="max-w-7xl px-4 2xl:px-0 mx-auto">
         <menu role="menu" className="flex gap-4">
           {MENU.map((item) => (
             <li
