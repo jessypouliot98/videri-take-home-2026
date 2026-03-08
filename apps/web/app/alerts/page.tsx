@@ -5,15 +5,21 @@ import { useMemo } from 'react';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { getErrorMessage } from '@/utils/get-error-message';
+import { components } from '@pkg/api-contract/generated/openapi';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
 export default function Alerts() {
   const api = useApi();
+  const router = useRouter();
+  const pathname = usePathname()
+  const searchParams = useSearchParams();
+  const status = (searchParams.get('status') ?? undefined) as components['schemas']['AlertDto']['status'] | undefined;
   const infiniteAlertsQuery = api.useInfiniteQuery(
     'get',
     '/alerts',
     {
       params: {
-        query: { status: 'NEW' }
+        query: { status }
       }
     },
     {
@@ -95,6 +101,23 @@ export default function Alerts() {
   return (
     <div className="p-4">
       <h1 className="text-xl font-medium">Alerts</h1>
+      <select
+        value={status ?? ''}
+        onChange={(ev) => {
+          const params = new URLSearchParams(searchParams.toString())
+          if (ev.target.value === '') {
+            params.delete('status')
+          } else {
+            params.set('status', ev.target.value)
+          }
+          void router.replace(`${pathname}?${params.toString()}`)
+        }}
+      >
+        <option value="">Filter Status</option>
+        <option value="NEW">NEW</option>
+        <option value="ACKNOWLEDGED">ACKNOWLEDGED</option>
+        <option value="RESOLVED">RESOLVED</option>
+      </select>
       <table className="w-full">
         <thead>
         <tr className="bg-neutral-300">
